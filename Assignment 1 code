@@ -1,0 +1,75 @@
+hpc<- read.table("household_power_consumption.txt", header=TRUE, sep=";") 
+
+## Read the data
+
+hpc$Date<- as.Date(hpc$Date, "%d/%m/%Y")
+
+hpc.sub<- hpc[((hpc$Date == "2007-02-01") | (hpc$Date == "2007-02-02")),] 
+
+##create a subset of the data with only the two dates required
+
+hpc.sub$Date.Time<- as.POSIXct(paste(hpc.sub$Date, hpc.sub$Time), format="%Y-%m-%d %H:%M:%S")
+
+## Create a new column with the date and time in one place
+
+hpc.sub$Global_active_power<- as.character(hpc.sub$Global_active_power)
+hpc.sub$Global_active_power<- as.numeric(hpc.sub$Global_active_power)
+
+hpc.sub$Sub_metering_1<- as.character(hpc.sub$Sub_metering_1)
+hpc.sub$Sub_metering_1<- as.numeric(hpc.sub$Sub_metering_1)
+
+hpc.sub$Sub_metering_2<- as.character(hpc.sub$Sub_metering_2)
+hpc.sub$Sub_metering_2<- as.numeric(hpc.sub$Sub_metering_2)
+
+hpc.sub$Sub_metering_3<- as.character(hpc.sub$Sub_metering_3)
+hpc.sub$Sub_metering_3<- as.numeric(hpc.sub$Sub_metering_3)
+
+hpc.sub$Voltage<- as.character(hpc.sub$Voltage)
+hpc.sub$Voltage<- as.numeric(hpc.sub$Voltage)
+
+hpc.sub$Global_reactive_power<- as.character(hpc.sub$Global_reactive_power)
+hpc.sub$Global_reactive_power<- as.numeric(hpc.sub$Global_reactive_power)
+
+## Make the required columns numeric
+
+png(file="Plot1.png", width = 480, height = 480 )
+hist(hpc.sub$Global_active_power, col=2, main="Global Active Power", 
+    xlab="Global Active Power (kilowatts)")
+dev.off()
+
+## Create firgure 1
+
+png(file="Plot2.png", width = 480, height = 480 )
+plot(hpc.sub$Global_active_power ~ hpc.sub$Date.Time , type = "l", xlab="", 
+    ylab="Global Active Power (kilowatts)")
+dev.off()
+
+## Create firgure 2
+
+png(file="Plot3.png", width = 480, height = 480 )
+plot(hpc.sub$Sub_metering_1 ~ hpc.sub$Date.Time, type="l", xlab="", ylab="Energy sub metering") 
+points(hpc.sub$Sub_metering_2 ~ hpc.sub$Date.Time, type="l", col=2) 
+points(hpc.sub$Sub_metering_3 ~ hpc.sub$Date.Time, type="l", col=4) 
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=1, col=c(1,2,4))
+dev.off()
+
+## Create firgure 3
+
+png(file="Plot4.png", width = 480, height = 480 )
+par(mfcol=c(2,2))
+plot(hpc.sub$Global_active_power ~ hpc.sub$Date.Time , type = "l", xlab="", 
+    ylab="Global Active Power (kilowatts)")
+
+plot(hpc.sub$Sub_metering_1 ~ hpc.sub$Date.Time, type="l", xlab="", ylab="Energy sub metering") 
+points(hpc.sub$Sub_metering_2 ~ hpc.sub$Date.Time, type="l", col=2) 
+points(hpc.sub$Sub_metering_3 ~ hpc.sub$Date.Time, type="l", col=4) 
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), 
+    lty=1, col=c(1,2,4), bty="n")
+
+plot(hpc.sub$Voltage ~ hpc.sub$Date.Time, type="l", xlab="datetime", ylab="Voltage")
+
+plot(hpc.sub$Global_reactive_power ~ hpc.sub$Date.Time, type="l", 
+  xlab="datetime", ylab="Global_reactive_power")
+dev.off()
+
+## Create firgure 4
